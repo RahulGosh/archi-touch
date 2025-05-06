@@ -1,0 +1,15 @@
+.circleContainer {
+    position: relative;
+    margin-top: 100px;
+  }
+  
+  .circle {
+    position: absolute;
+    height: 1550%; /* Adjust the height for the desired curve */
+    width: 100%; /* Slightly wider than the container */
+    border-radius: 0 0 50% 50%; /* Apply the curve */
+    background-color: white;
+    z-index: 1;
+    box-shadow: 0px 60px 50px rgba(0, 0, 0, 0.748);
+    transform: translate3d(0, 0, 0); /* Ensure hardware acceleration */
+  }

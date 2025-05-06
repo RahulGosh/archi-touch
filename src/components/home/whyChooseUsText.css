@@ -1,0 +1,23 @@
+.sticky {
+    position: sticky;
+    top: 100px; /* Adjust this value to set how far from the top the title should stick */
+    align-self: flex-start;
+  }
+
+/* Disable sticky on small screens */
+@media (max-width: 935px) {
+    .sticky {
+        position: static; /* Normal flow on small screens */
+    }
+}
+@media (max-width: 470px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .stat-left {
+    text-align: left;
+  }
+  .stat-right {
+    text-align: right;
+  }
+}

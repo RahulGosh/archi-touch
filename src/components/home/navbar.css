@@ -1,0 +1,74 @@
+.navbar {
+    width: 100%;
+    background-color: transparent;
+    color: black;
+    position: absolute;
+    top: 0;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  
+  .sticky {
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  
+  .navbarContent {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Match this with the height in the motion.div */
+  }
+  
+  .title {
+    font-size: 70px;
+    margin: 0;
+    padding: 10px 0;
+  }
+  
+  .navbarContent div {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .navbarContent button {
+    margin: 5px;
+  }
+
+  .nav{
+    display: flex;
+    align-items: center;
+
+
+    .el{
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 1;
+        padding: 15px;
+        cursor: pointer;
+        &:hover{
+            .indicator{
+                transform: scale(1);
+            }
+        }
+        .indicator{
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            top: 45px;
+            left: 50%;
+            background-color: white;
+            border-radius: 50%;
+            transform: scale(0) translateX(-50%);
+            transition: transform 0.2s cubic-bezier(0.76, 0, 0.24, 1);
+        }
+    }
+  }

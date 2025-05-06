@@ -1,0 +1,110 @@
+.sliderContainer {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .slider {
+    display: flex;
+    white-space: nowrap;
+    position: relative;
+  }
+  
+  .sliderText {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    padding-right: 50px;
+  }
+
+  .heading-line {
+    display: flex;
+    align-items: center;
+  }
+  
+  .heading-line::after {
+    content: "";
+    flex-grow: 1;
+    margin-left: 16px; /* Adjust spacing between text and line */
+    height: 1px;
+    background-color: #ccc; /* Line color */
+  }
+
+  /* .image-container {
+    position: relative;
+  }
+  
+  .image-container .instagram-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .image-container:hover .instagram-text {
+    opacity: 1;
+  } */
+
+  .image-container {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .image-container .instagram-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: float 3s ease-in-out infinite; /* Floating animation */
+    pointer-events: none; /* Prevent the text from interfering with mouse events */
+  }
+  
+  .image-container:hover .instagram-text {
+    opacity: 1;
+  }
+  
+  .image-container img {
+    transition: transform 0.5s ease; /* Smooth scaling for image */
+  }
+  
+  .image-container:hover img {
+    transform: scale(1.05); /* Slight zoom effect */
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translate(-50%, -50%) translateY(0); /* Initial position */
+    }
+    50% {
+      transform: translate(-50%, -50%) translateY(-10px); /* Move up */
+    }
+    100% {
+      transform: translate(-50%, -50%) translateY(0); /* Move back to initial position */
+    }
+  }
+
+  .circleContainer {
+    position: relative;
+    /* margin-top: 100px; */
+  }
+  
+  .circle {
+    position: absolute;
+    height: 150%; /* Adjust the height for the desired curve */
+    width: 100%; /* Slightly wider than the container */
+    border-radius: 0 0 50% 50%; /* Apply the curve */
+    background-color: white;
+    z-index: 1;
+    box-shadow: 0px 60px 50px rgba(0, 0, 0, 0.748);
+    transform: translate3d(0, 0, 0); /* Ensure hardware acceleration */
+  }

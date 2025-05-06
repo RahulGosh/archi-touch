@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hero-section {
+    @apply h-hero-height p-hero-padding;
+  }
+  
+  .content-section {
+    @apply p-content-padding;
+  }
+
+  .top-20-percent {
+    object-position: 50% 20%;
+  }
+
+  

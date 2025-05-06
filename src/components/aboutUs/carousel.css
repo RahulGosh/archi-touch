@@ -1,0 +1,69 @@
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Custom arrow button styles */
+.custom-arrow {
+  background-color: white;
+  color: gray;
+  border: 2px solid transparent;
+  padding: 16px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease, border-width 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.custom-arrow:hover {
+  border-color: black;
+  border-width: 4px; /* Increase border width on hover */
+}
+
+.custom-arrow:active {
+  transform: scale(0.9); /* Scale down on click */
+  border-color: black;
+}
+
+.hoverImageContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.3s ease; /* CSS-based transition */
+}
+
+.item:hover .hoverImageContainer {
+  opacity: 1;
+}
+
+.custom-height {
+  height: 28rem; /* Default height */
+}
+
+@media (max-width: 900px) {
+  .custom-height {
+    height: 23rem; /* Adjust height for screens smaller than 680px */
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-height {
+    height: 22rem; /* Adjust height for screens smaller than 680px */
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-height {
+    height: 18rem; /* Adjust height for screens smaller than 680px */
+  }
+}
