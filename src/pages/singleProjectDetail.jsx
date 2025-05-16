@@ -18,15 +18,14 @@ import AutomaticTextSlider from "../components/aboutUs/automaticTextSlider";
 import "./singleProjectDetail.css";
 
 const SingleProjectDetail = () => {
-  const { id } = useParams(); // Get project ID from the URL
+  const { id } = useParams();
   const [project, setProject] = useState(null);
-
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredTitle, setIsHoveredTitle] = useState(false);
   const [randomProject, setRandomProject] = useState(null);
-  const [selectedIndex, setSelectedIndex] = useState(null); // Track the index of the selected image
+  const [selectedIndex, setSelectedIndex] = useState(null);
 
-  const closeLightbox = () => setSelectedIndex(null); // Function to close the lightbox
+  const closeLightbox = () => setSelectedIndex(null);
 
   const container = useRef(null);
   const textRef = useRef(null);
@@ -50,29 +49,30 @@ const SingleProjectDetail = () => {
   const text = "Our Gallery";
 
   useEffect(() => {
-    // Simulate API call by finding the project based on ID
     const foundProject = singleProjectsData.find((p) => p.id === parseInt(id));
     setProject(foundProject);
 
-    // Get a random project that is not the current one
-    const availableProjects = singleProjectsData.filter(
-      (p) => p.id !== foundProject.id
-    );
-    const randomIndex = Math.floor(Math.random() * availableProjects.length);
-    setRandomProject(availableProjects[randomIndex]);
-  }, [id]);
+    if (foundProject) {
+      // Filter projects by the same category, excluding the current project
+      const sameCategoryProjects = singleProjectsData.filter(
+        (p) => p.category === foundProject.category && p.id !== foundProject.id
+      );
 
-  useEffect(() => {
-    // Find the project based on the current ID
-    const foundProject = singleProjectsData.find((p) => p.id === parseInt(id));
-    setProject(foundProject);
-
-    // Get a random project that is not the current one
-    const availableProjects = singleProjectsData.filter(
-      (p) => p.id !== foundProject.id
-    );
-    const randomIndex = Math.floor(Math.random() * availableProjects.length);
-    setRandomProject(availableProjects[randomIndex]);
+      // If there are projects in the same category, pick a random one
+      if (sameCategoryProjects.length > 0) {
+        const randomIndex = Math.floor(Math.random() * sameCategoryProjects.length);
+        setRandomProject(sameCategoryProjects[randomIndex]);
+      } else {
+        // If no projects in same category, pick any random project
+        const otherProjects = singleProjectsData.filter(
+          (p) => p.id !== foundProject.id
+        );
+        if (otherProjects.length > 0) {
+          const randomIndex = Math.floor(Math.random() * otherProjects.length);
+          setRandomProject(otherProjects[randomIndex]);
+        }
+      }
+    }
   }, [id]);
 
   const showNextImage = () => {
@@ -98,9 +98,9 @@ const SingleProjectDetail = () => {
       x: -30,
       transition: {
         type: "spring",
-        duration: 2, // Set the duration to make it slower
-        damping: 80, // Increased damping for a slower and smoother effect
-        stiffness: 20, // Reduced stiffness for slower movement
+        duration: 2,
+        damping: 80,
+        stiffness: 20,
       },
     },
     show: {
@@ -109,9 +109,9 @@ const SingleProjectDetail = () => {
       y: 0,
       transition: {
         type: "spring",
-        duration: 2, // Set the duration to make it slower
-        damping: 15, // Increased damping for a slower and smoother effect
-        stiffness: 80, // Reduced stiffness for slower movement
+        duration: 2,
+        damping: 15,
+        stiffness: 80,
       },
     },
   };
@@ -142,7 +142,6 @@ const SingleProjectDetail = () => {
                     </span>
                     <span className="mx-6 text-gray-300">———</span>
                     <span className="text-base text-gray-500">
-                      {/* APRIL 15, 2022 */}
                       {project?.date}
                     </span>
                   </div>
@@ -203,49 +202,51 @@ const SingleProjectDetail = () => {
                 <div className="flex-grow relative h-full overflow-hidden hover:cursor-pointer">
                   {/* Image */}
                   <motion.img
-                    src="https://cdn.prod.website-files.com/66680ca683883f060b42340f/666ff036c42c74da3f142332_Banner-9.jpg"
-                    alt="Modern Elegance"
+                    src={randomProject?.image || "https://cdn.prod.website-files.com/66680ca683883f060b42340f/666ff036c42c74da3f142332_Banner-9.jpg"}
+                    alt={randomProject?.title || "Modern Elegance"}
                     className="w-full h-[300px] sm:h-[500px] lg:h-full object-cover rounded-lg shadow-lg"
-                    initial={{ opacity: 0, y: 50 }} // Start hidden
-                    whileInView={{ opacity: 1, y: 0 }} // Animate when in view
-                    viewport={{ once: true }} // Animate only once
-                    transition={{ duration: 0.5, ease: "easeInOut" }} // Smooth transition
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   />
 
                   {/* Overlay Box with Text */}
-                  <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 flex justify-between items-center">
-                    <div className="w-full">
-                      <span className="text-xs text-gray-500 font-semibold block">
-                        YOU MAY ALSO LIKE IT
-                      </span>
+                  <Link to={`/project/detail/${randomProject?.id}`}>
+                    <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-lg p-4 flex justify-between items-center hover:bg-gray-50 transition-colors">
+                      <div className="w-full">
+                        <span className="text-xs text-gray-500 font-semibold block">
+                          YOU MAY ALSO LIKE IT
+                        </span>
 
-                      <div className="relative overflow-hidden h-[30px] w-full">
-                        {/* Title - First instance */}
-                        <h2
-                          className="text-xl md:text-xl lg:text-xl font-bold absolute w-full text-left transition-transform duration-500 ease-in-out"
-                          style={{
-                            transform: isHoveredTitle
-                              ? "translateY(-140%)"
-                              : "translateY(0)",
-                          }}
-                        >
-                          {randomProject?.title}
-                        </h2>
+                        <div className="relative overflow-hidden h-[30px] w-full">
+                          {/* Title - First instance */}
+                          <h2
+                            className="text-xl md:text-xl lg:text-xl font-bold absolute w-full text-left transition-transform duration-500 ease-in-out"
+                            style={{
+                              transform: isHoveredTitle
+                                ? "translateY(-140%)"
+                                : "translateY(0)",
+                            }}
+                          >
+                            {randomProject?.title}
+                          </h2>
 
-                        {/* Title - Second instance */}
-                        <h2
-                          className="text-xl md:text-xl lg:text-xl font-bold absolute w-full text-left transition-transform duration-500 ease-in-out"
-                          style={{
-                            transform: isHoveredTitle
-                              ? "translateY(0)"
-                              : "translateY(140%)",
-                          }}
-                        >
-                          {randomProject?.title}
-                        </h2>
+                          {/* Title - Second instance */}
+                          <h2
+                            className="text-xl md:text-xl lg:text-xl font-bold absolute w-full text-left transition-transform duration-500 ease-in-out"
+                            style={{
+                              transform: isHoveredTitle
+                                ? "translateY(0)"
+                                : "translateY(140%)",
+                            }}
+                          >
+                            {randomProject?.title}
+                          </h2>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -257,7 +258,6 @@ const SingleProjectDetail = () => {
         </div>
 
         <div className="mt-5 sm:mt-16 px-4">
-          {/* <h2 className="text-3xl font-bold mb-10 text-center">Our Gallery</h2> */}
           <motion.h1
             className="text-4xl font-bold mb-10 text-center"
             ref={textRef}
@@ -273,7 +273,7 @@ const SingleProjectDetail = () => {
               <motion.span
                 key={index}
                 variants={characterAnimation}
-                className="inline-block mr-2" // Add a small margin-right to handle spaces
+                className="inline-block mr-2"
               >
                 {word}
               </motion.span>
@@ -286,7 +286,7 @@ const SingleProjectDetail = () => {
                 src={image.src}
                 animationType={image.animationType}
                 direction={image.direction}
-                onClick={() => setSelectedIndex(index)} // Open lightbox with the clicked image
+                onClick={() => setSelectedIndex(index)}
               />
             ))}
           </div>
@@ -304,8 +304,7 @@ const SingleProjectDetail = () => {
 
               {/* Previous Button */}
               <button
-                className="absolute left-4 sm:left-2 text-white font-bold bg-black bg-opacity-50 rounded-full z-10
-                 px-2 py-0 text-xl sm:text-lg sm:px-4 sm:py-2"
+                className="absolute left-4 sm:left-2 text-white font-bold bg-black bg-opacity-50 rounded-full z-10 px-2 py-0 text-xl sm:text-lg sm:px-4 sm:py-2"
                 onClick={showPreviousImage}
               >
                 &#10094;
@@ -323,8 +322,7 @@ const SingleProjectDetail = () => {
 
               {/* Next Button */}
               <button
-                className="absolute right-4 sm:right-2 text-white font-bold bg-black bg-opacity-50 rounded-full z-10
-                 px-2 py-0 text-xl sm:text-lg sm:px-4 sm:py-2"
+                className="absolute right-4 sm:right-2 text-white font-bold bg-black bg-opacity-50 rounded-full z-10 px-2 py-0 text-xl sm:text-lg sm:px-4 sm:py-2"
                 onClick={showNextImage}
               >
                 &#10095;
@@ -340,10 +338,6 @@ const SingleProjectDetail = () => {
         <div className="mt-16 mb-0 sm:mt-20">
           <FeedbackForProjectDetail />
         </div>
-
-        {/* <motion.div style={{ height }} className="circleContainers">
-        <div className="circles"></div>
-      </motion.div> */}
       </div>
       <StickyFooter />
     </div>

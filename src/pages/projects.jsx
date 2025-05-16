@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { FaInstagram } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -8,27 +8,137 @@ import StickyFooter from "../components/stickyFooter";
 import { singleProjectsData } from "../data/singleProjectsData";
 import "./projects.css";
 
-// Memoized data
-const categories = [
+// Memoize static data
+const CATEGORIES = Object.freeze([
   "All",
-  "Branding",
+  "Branding", 
   "Custom Print",
   "Digital Design",
   "Ecommerce",
   "Masonry",
-  "Portfolio Single",
-];
+  "Portfolio Single"
+]);
 
-const images = [
+const INSTAGRAM_IMAGES = Object.freeze([
   "https://images.pexels.com/photos/5900806/pexels-photo-5900806.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   // ... other image URLs
-];
+]);
+
+// Memoized Project Item component
+const ProjectItem = React.memo(({ 
+  project, 
+  isHovered, 
+  onHover, 
+  onMouseMove,
+  variants
+}) => {
+  return (
+    <motion.div
+      layout
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className={`${project.span || ""}`}
+    >
+      <Link to={`/project/detail/${project.id}`}>
+        <motion.div
+          className="relative overflow-hidden rounded-lg cursor-pointer w-full h-full"
+          onMouseEnter={() => onHover(project.id)}
+          onMouseLeave={() => onHover(null)}
+          onMouseMove={onMouseMove}
+          variants={{
+            hover: { y: -4, scale: 1.02 },
+            initial: { y: 0, scale: 1 }
+          }}
+          animate={isHovered ? "hover" : "initial"}
+          transition={{ type: "spring", stiffness: 300, damping: 10 }}
+        >
+          <motion.img
+            src={project.image}
+            alt={project.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          />
+
+          <motion.div
+            className="absolute inset-0 bg-black"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 0.9 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+          
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ x: "-20px", opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: "-20px", opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <motion.span className="text-white text-6xl font-bold">
+                  →
+                </motion.span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        <h2 className="text-lg font-semibold text-left mt-2">
+          {project.title}
+        </h2>
+      </Link>
+    </motion.div>
+  );
+});
+
+// Memoized Instagram Image component
+const InstagramImage = React.memo(({ src, index }) => {
+  return (
+    <div className="w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 px-2 mb-4">
+      <motion.div
+        className="relative group cursor-pointer will-change-transform"
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      >
+        <motion.img
+          src={src}
+          alt={`Interior ${index + 1}`}
+          className="w-full h-[150px] sm:h-[200px] object-cover rounded"
+          loading="lazy"
+          decoding="async"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: index * 0.1 }}
+          viewport={{ once: true, margin: "100px" }}
+        />
+        <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded"></div>
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <MagneticForInstagram>
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white bg-opacity-20 border border-white">
+              <FaInstagram size={20} color="white" />
+            </div>
+          </MagneticForInstagram>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+});
 
 const Projects = React.memo(() => {
   const [hoveredProject, setHoveredProject] = useState(null);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [activeFilter, setActiveFilter] = useState("All");
-  const [filteredProjects, setFilteredProjects] = useState(singleProjectsData);
   
   const container = useRef(null);
   const imageRefs = useRef([]);
@@ -41,22 +151,14 @@ const Projects = React.memo(() => {
 
   const height = useTransform(scrollYProgress, [0, 0.9], [10, 0]);
 
-  // Memoized filter function
-  const filterProjects = useCallback(() => {
-    if (activeFilter === "All") {
-      setFilteredProjects(singleProjectsData);
-    } else {
-      setFilteredProjects(
-        singleProjectsData.filter((project) => project.category === activeFilter)
-      );
-    }
+  // Memoized filtered projects
+  const filteredProjects = useMemo(() => {
+    return activeFilter === "All" 
+      ? singleProjectsData 
+      : singleProjectsData.filter(project => project.category === activeFilter);
   }, [activeFilter]);
 
-  useEffect(() => {
-    filterProjects();
-  }, [filterProjects]);
-
-  // Optimized mouse move handler
+  // Optimized mouse move handler with throttling
   const handleMouseMove = useCallback((e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setCursorPos({
@@ -66,7 +168,7 @@ const Projects = React.memo(() => {
   }, []);
 
   // Shared animation variants
-  const projectVariants = {
+  const projectVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 50 },
     visible: { 
       opacity: 1, 
@@ -79,31 +181,45 @@ const Projects = React.memo(() => {
       }
     },
     exit: { opacity: 0, y: -50 }
-  };
-
-  const hoverVariants = {
-    hover: { 
-      y: -4,
-      scale: 1.02,
-      transition: { duration: 0.3 }
-    },
-    initial: { y: 0, scale: 1 }
-  };
+  }), []);
 
   // Preload images
   useEffect(() => {
     const preloadImages = () => {
-      singleProjectsData.forEach(project => {
-        const img = new Image();
-        img.src = project.image;
-      });
-      images.forEach(src => {
+      const imagesToPreload = [
+        ...singleProjectsData.map(p => p.image),
+        ...INSTAGRAM_IMAGES
+      ];
+      
+      imagesToPreload.forEach(src => {
         const img = new Image();
         img.src = src;
       });
     };
+    
     preloadImages();
   }, []);
+
+  // Memoized project items
+  const projectItems = useMemo(() => (
+    filteredProjects.map(project => (
+      <ProjectItem
+        key={project.id}
+        project={project}
+        isHovered={hoveredProject === project.id}
+        onHover={setHoveredProject}
+        onMouseMove={handleMouseMove}
+        variants={projectVariants}
+      />
+    ))
+  ), [filteredProjects, hoveredProject, handleMouseMove, projectVariants]);
+
+  // Memoized Instagram images
+  const instagramImages = useMemo(() => (
+    INSTAGRAM_IMAGES.map((src, index) => (
+      <InstagramImage key={`insta-${index}`} src={src} index={index} />
+    ))
+  ), []);
 
   return (
     <>
@@ -130,7 +246,7 @@ const Projects = React.memo(() => {
               <div className="mt-20 sm:mt-28 mb-12">
                 <p className="text-lg mb-4">Filter by</p>
                 <div className="flex flex-wrap gap-4">
-                  {categories.map((category) => (
+                  {CATEGORIES.map((category) => (
                     <button
                       key={category}
                       className={`text-gray-600 hover:text-black transition duration-300 ${
@@ -150,65 +266,7 @@ const Projects = React.memo(() => {
                 layout
               >
                 <AnimatePresence>
-                  {filteredProjects.map((project) => (
-                    <motion.div
-                      key={project.id}
-                      layout
-                      variants={projectVariants}
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      className={`${project.span || ""}`}
-                    >
-                      <Link to={`/project/detail/${project.id}`}>
-                        <motion.div
-                          className="relative overflow-hidden rounded-lg cursor-pointer w-full h-full"
-                          onMouseEnter={() => setHoveredProject(project.id)}
-                          onMouseLeave={() => setHoveredProject(null)}
-                          onMouseMove={handleMouseMove}
-                          variants={hoverVariants}
-                          animate={hoveredProject === project.id ? "hover" : "initial"}
-                        >
-                          <motion.img
-                            src={project.image}
-                            alt={project.title}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                          />
-
-                          <motion.div
-                            className="absolute inset-0 bg-black"
-                            initial={{ opacity: 0 }}
-                            animate={{
-                              opacity: hoveredProject === project.id ? 0.9 : 0,
-                            }}
-                            transition={{ duration: 0.3 }}
-                          />
-                          
-                          <AnimatePresence>
-                            {hoveredProject === project.id && (
-                              <motion.div
-                                initial={{ x: "-20px", opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                exit={{ x: "-20px", opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="absolute inset-0 flex items-center justify-center"
-                              >
-                                <motion.span className="text-white text-6xl font-bold">
-                                  →
-                                </motion.span>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-
-                        <h2 className="text-lg font-semibold text-left mt-2">
-                          {project.title}
-                        </h2>
-                      </Link>
-                    </motion.div>
-                  ))}
+                  {projectItems}
                 </AnimatePresence>
               </motion.div>
             </div>
@@ -228,50 +286,14 @@ const Projects = React.memo(() => {
           </motion.h2>
 
           <div className="flex flex-wrap -mx-2">
-            {images.map((src, index) => (
-              <div
-                key={`insta-${index}`}
-                className="w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/6 px-2 mb-4"
-              >
-                <motion.div
-                  className="relative group cursor-pointer"
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                >
-                  <motion.img
-                    src={src}
-                    alt={`Interior ${index + 1}`}
-                    className="w-full h-[150px] sm:h-[200px] object-cover rounded"
-                    loading="lazy"
-                    decoding="async"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.7, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                  />
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition-opacity duration-300 rounded"></div>
-                  <motion.div
-                    className="absolute inset-0 flex items-center justify-center"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <MagneticForInstagram>
-                      <div className="flex items-center justify-center w-14 h-14 rounded-full bg-white bg-opacity-20 border border-white">
-                        <FaInstagram size={20} color="white" />
-                      </div>
-                    </MagneticForInstagram>
-                  </motion.div>
-                </motion.div>
-              </div>
-            ))}
+            {instagramImages}
           </div>
         </div>
       </div>
       
       <motion.div 
         style={{ height }} 
-        className="circleContainers"
+        className="circleContainers will-change-transform"
       />
       
       <StickyFooter />

@@ -1,70 +1,60 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { motion, useAnimation, useInView } from "framer-motion";
 import "./story.css";
 
-const projects = [
+// Memoize static project data
+const PROJECTS = [
   {
     id: 1,
     title: "LUXURY LIVING",
     description: "By Bjørn Andersen, Decor Group",
-    image:
-      "https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     date: "June 26, 2024",
   },
   {
     id: 2,
     title: "LUXURY LIVING",
     description: "By Bjørn Andersen, Decor Group",
-    image:
-      "https://images.unsplash.com/photo-1613082442324-62ef5249275e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1613082442324-62ef5249275e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     date: "June 26, 2024",
   },
   {
     id: 3,
     title: "LUXURY LIVING",
     description: "By Bjørn Andersen, Decor Group",
-    image:
-      "https://images.unsplash.com/photo-1621293954908-907159247fc8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1621293954908-907159247fc8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     date: "June 26, 2024",
   },
   {
     id: 4,
     title: "LUXURY LIVING",
     description: "By Bjørn Andersen, Decor Group",
-    image:
-      "https://images.unsplash.com/photo-1560662105-57f8ad6ae2d1?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "https://images.unsplash.com/photo-1560662105-57f8ad6ae2d1?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     date: "June 26, 2024",
   },
 ];
 
-const StoryProjectCard = ({ title, description, image, date }) => {
-  const [isHoveredTitle, setIsHoveredTitle] = useState(false);
-  const [isHoveredArrow, setIsHoveredArrow] = useState(false);
-  const [isHoveredImage, setIsHoveredImage] = useState(false);
+// Memoized project card component
+const StoryProjectCard = React.memo(({ title, description, image, date }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div
+    <div 
       className="space-y-10 pb-0"
-      onMouseEnter={() => {
-        setIsHoveredTitle(true);
-        setIsHoveredArrow(true);
-        setIsHoveredImage(true);
-      }}
-      onMouseLeave={() => {
-        setIsHoveredTitle(false);
-        setIsHoveredArrow(false);
-        setIsHoveredImage(false);
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex justify-between items-center border-t border-gray-300 pt-6 pb-0 mt-6">
         <div className="flex flex-col sm:flex-row space-x-0 sm:space-x-6 w-full cursor-pointer">
-          <motion.div className="w-full h-auto sm:w-[27rem] md:w-[32rem] lg:w-[30rem] sm:h-52 md:h-[13rem] lg:h-[13rem] rounded-lg shadow-lg border border-gray-300 overflow-hidden"
+          <motion.div 
+            className="w-full h-auto sm:w-[27rem] md:w-[32rem] lg:w-[30rem] sm:h-52 md:h-[13rem] lg:h-[13rem] rounded-lg shadow-lg border border-gray-300 overflow-hidden"
+            animate={{ scale: isHovered ? 0.9 : 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-            <motion.img
+            <img
               src={image}
               alt="Project"
-              animate={{ scale: isHoveredImage ? 0.9 : 1 }}
-              transition={{ duration: 0.3 }}
+              loading="lazy"
               className="w-full h-full object-cover rounded-lg"
             />
           </motion.div>
@@ -73,16 +63,16 @@ const StoryProjectCard = ({ title, description, image, date }) => {
               <div className="relative overflow-hidden h-[2.5em]">
                 <motion.h3
                   initial={{ y: 0 }}
-                  animate={{ y: isHoveredTitle ? "-100%" : "0%" }}
-                  transition={{ duration: 0.3 }}
+                  animate={{ y: isHovered ? "-100%" : "0%" }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="font-bold text-2xl text-gray-700"
                 >
                   {title}
                 </motion.h3>
                 <motion.h3
                   initial={{ y: "100%" }}
-                  animate={{ y: isHoveredTitle ? "0%" : "100%" }}
-                  transition={{ duration: 0.3 }}
+                  animate={{ y: isHovered ? "0%" : "100%" }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="absolute top-0 font-bold text-2xl text-gray-700"
                 >
                   {title}
@@ -96,45 +86,33 @@ const StoryProjectCard = ({ title, description, image, date }) => {
                 <motion.div
                   initial={{ backgroundColor: "#fff", color: "#000" }}
                   animate={{
-                    backgroundColor: isHoveredArrow ? "#000" : "#fff",
-                    color: isHoveredArrow ? "#fff" : "#000",
+                    backgroundColor: isHovered ? "#000" : "#fff",
+                    color: isHovered ? "#fff" : "#000",
                   }}
                   transition={{ duration: 0.3 }}
-                  className="w-full h-full flex items-center justify-center rounded-full"
+                  className="w-full h-full flex items-center justify-center rounded-full border border-black"
                 >
                   <motion.svg
                     initial={{ x: 0 }}
-                    animate={{ x: isHoveredArrow ? "100%" : "0%" }}
+                    animate={{ x: isHovered ? "100%" : "0%" }}
                     transition={{ duration: 0.3 }}
                     className="absolute w-[1rem] h-[1.1rem]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </motion.svg>
                   <motion.svg
                     initial={{ x: "-100%" }}
-                    animate={{ x: isHoveredArrow ? "0%" : "-100%" }}
+                    animate={{ x: isHovered ? "0%" : "-100%" }}
                     transition={{ duration: 0.3 }}
                     className="absolute w-[1rem] h-[1.1rem]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </motion.svg>
                 </motion.div>
               </div>
@@ -142,10 +120,9 @@ const StoryProjectCard = ({ title, description, image, date }) => {
           </div>
         </div>
       </div>
-      {/* Add more project detail sections here if needed */}
     </div>
   );
-};
+});
 
 const Story = () => {
   const sectionRef = useRef(null);
@@ -156,13 +133,16 @@ const Story = () => {
   const controls = useAnimation();
   const exploreProjectsControls = useAnimation();
 
-  const isSectionInView = useInView(sectionRef, { once: true });
-  const isExploreProjectsInView = useInView(exploreProjectsRef, {
-    threshold: 0.5,
-  });
+  const isSectionInView = useInView(sectionRef, { once: true, margin: "100px" });
+  const isExploreProjectsInView = useInView(exploreProjectsRef, { threshold: 0.5 });
   const isRepeatedTextInView = useInView(repeatedTextRef, { threshold: 0.1 });
 
-  const [isHoveredTitle, setIsHoveredTitle] = useState(false);
+  // Memoize project cards
+  const projectCards = useMemo(() => 
+    PROJECTS.map(project => (
+      <StoryProjectCard key={project.id} {...project} />
+    )), 
+  []);
 
   useEffect(() => {
     if (isSectionInView) {
@@ -171,52 +151,46 @@ const Story = () => {
   }, [isSectionInView, controls]);
 
   useEffect(() => {
-    // Get the current screen width
-    const screenWidth = window.innerWidth;
+    const handleResize = () => {
+      const screenWidth = window.innerWidth;
+      if (isRepeatedTextInView && screenWidth >= 935) {
+        exploreProjectsControls.start({ opacity: 0, transition: { duration: 0.5 } });
+      } else {
+        exploreProjectsControls.start({ opacity: 1, transition: { duration: 0.5 } });
+      }
+    };
 
-    if (isRepeatedTextInView && screenWidth >= 935) { // Adjusted logic here
-      exploreProjectsControls.start({
-        opacity: 0,
-        transition: { duration: 0.5 },
-      });
-    } else {
-      exploreProjectsControls.start({
-        opacity: 1,
-        transition: { duration: 0.5 },
-      });
-    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isRepeatedTextInView, exploreProjectsControls]);
 
   useEffect(() => {
     const section = sectionRef.current;
     const title = titleRef.current;
-
     if (!section || !title) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) {
-          title.classList.add("sticky");
-        } else {
-          title.classList.remove("sticky");
-        }
+        entry.isIntersecting 
+          ? title.classList.remove("sticky") 
+          : title.classList.add("sticky");
       },
       { threshold: 0.1, rootMargin: `-${section.offsetHeight}px 0px 0px 0px` }
     );
 
     observer.observe(section);
-
     return () => observer.disconnect();
   }, []);
 
   const textVariants = {
     hidden: { opacity: 0, y: 100 },
-    visible: { opacity: 1, y: 0, transition: { duration: 1 } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
   };
 
   return (
-    <div
-      className="container max-w-7xl mx-auto custom-md:max-w-6xl custom-md:mx-auto px-0 pb-0 bg-gray-100 flex items-center justify-center mt-[1.5rem] border border-gray-300 rounded-lg shadow-lg"
+    <div 
+      className="container max-w-7xl mx-auto custom-md:max-w-6xl px-0 pb-0 bg-gray-100 flex items-center justify-center mt-[1.5rem] border border-gray-300 rounded-lg shadow-lg"
       ref={sectionRef}
     >
       <div className="flex flex-col custom-md:flex-row justify-between w-full">
@@ -230,8 +204,9 @@ const Story = () => {
           <img
             src="https://images.unsplash.com/photo-1564078516393-cf04bd966897?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Decor Image"
-            className="w-full h-auto max-h-[25rem] sm:max-h-[28rem] custom-md:max-h-[36.7rem] lg:max-h-[36.7rem] object-cover rounded-lg shadow-lg"
-            />
+            loading="lazy"
+            className="w-full h-auto max-h-[25rem] sm:max-h-[28rem] custom-md:max-h-[36.7rem] object-cover rounded-lg shadow-lg"
+          />
         </motion.div>
 
         <div className="w-full custom-md:w-1/2 mt-8 custom-md:mt-0 flex flex-col space-y-8 px-4 justify-center">
@@ -263,14 +238,8 @@ const Story = () => {
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>
             </div>
@@ -291,32 +260,8 @@ const Story = () => {
             </div>
           </div>
 
-          {/* New Projects Detail Section */}
           <div className="pb-4" ref={repeatedTextRef}>
-            <StoryProjectCard
-              title="ppppppppp"
-              description="ewqpoopdjqwpjwqd dwqd"
-              date="June 25 2131"
-              image="https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-            <StoryProjectCard
-              title="ppppppppp"
-              description="ewqpoopdjqwpjwqd dwqd"
-              date="June 25 2131"
-              image="https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-            <StoryProjectCard
-              title="ppppppppp"
-              description="ewqpoopdjqwpjwqd dwqd"
-              date="June 25 2131"
-              image="https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
-            <StoryProjectCard
-              title="ppppppppp"
-              description="ewqpoopdjqwpjwqd dwqd"
-              date="June 25 2131"
-              image="https://images.unsplash.com/photo-1572786258684-9b3d5671e7d8?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            />
+            {projectCards}
           </div>
         </div>
       </div>
@@ -324,4 +269,4 @@ const Story = () => {
   );
 };
 
-export default Story;
+export default React.memo(Story);

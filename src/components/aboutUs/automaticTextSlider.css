@@ -87,6 +87,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   transition: background-position 0.7s cubic-bezier(0.4, 0, 0.1, 1);
+  display: inline-block;
 }
 
 .hover-text:hover {
