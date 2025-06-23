@@ -1,25 +1,35 @@
 import { useState, useEffect } from 'react';
 
-const useCountUp = (endValue, duration = 2000) => {
+const useCountUp = (endValue, duration = 1500) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
+    if (endValue === 0) {
+      setCount(0);
+      return;
+    }
+
     let start = 0;
-    const increment = endValue / (duration / 50); // Adjust 50ms as the interval
+    const increment = endValue / (duration / 60); // 60fps
+    let animationFrame;
 
     const handleCount = () => {
       start += increment;
       if (start >= endValue) {
         setCount(endValue);
-        clearInterval(interval);
       } else {
         setCount(Math.ceil(start));
+        animationFrame = requestAnimationFrame(handleCount);
       }
     };
 
-    const interval = setInterval(handleCount, 50);
+    animationFrame = requestAnimationFrame(handleCount);
 
-    return () => clearInterval(interval);
+    return () => {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    };
   }, [endValue, duration]);
 
   return count;

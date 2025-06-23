@@ -3,7 +3,6 @@ import { motion, useInView } from "framer-motion";
 import Magnetic from "../utils/magnetic";
 import "./footer.css";
 
-// Texts that will cycle through
 const textArray = [
   "Interior Design",
   "Amazing Residential",
@@ -33,22 +32,7 @@ const BoxItem = ({ text, widths, heights }) => {
             : "bg-transparent text-white border-white"
         } ${widths} ${heights}`}
       >
-        {/* First Text Animation */}
-        <button
-          className="absolute flex items-center justify-center text-base sm:text-base md:text-lg lg:text-lg transition-transform duration-500"
-          style={{
-            transform: isHovered ? "translateY(-100%)" : "translateY(0)",
-          }}
-        >
-          {text}
-        </button>
-        {/* Second Text Animation */}
-        <button
-          className="absolute flex items-center justify-center text-base sm:text-base md:text-lg lg:text-lg transition-transform duration-500"
-          style={{
-            transform: isHovered ? "translateY(0)" : "translateY(100%)",
-          }}
-        >
+        <button className="flex items-center justify-center text-base sm:text-base md:text-lg lg:text-lg">
           {text}
         </button>
       </div>
@@ -65,7 +49,6 @@ const Footer = () => {
   const [isTyping, setIsTyping] = useState(true);
 
   useEffect(() => {
-    // Typing effect logic
     if (isTyping) {
       const currentText = textArray[currentIndex];
       const typingInterval = setInterval(() => {
@@ -107,15 +90,12 @@ const Footer = () => {
   }, []);
 
   return (
-    <footer className="relative bg-black text-white min-h-[60vh] md:min-h-[90vh]  sm:min-h-[70vh] sm:px-4 flex flex-col items-center">
-      {/* Flex container for X icon and Social Media Links */}
+    <footer className="relative bg-black text-white min-h-[60vh] md:min-h-[90vh] sm:min-h-[70vh] sm:px-4 flex flex-col items-center">
       <div className="w-full flex justify-between items-center mt-4 flex-col sm:flex-row">
-        {/* Top Left Icon */}
         <div className="flex justify-center items-center mb-4 sm:mb-0">
           <span className="text-white text-xl sm:text-2xl">✖</span>
         </div>
 
-        {/* Top Right Social Media Links */}
         <div className="flex justify-center items-center space-x-2 text-xs text-gray-400 text-center sm:text-right">
           <Magnetic>
             <div>
@@ -150,14 +130,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Center Content */}
       <div className="flex-grow flex flex-col items-center justify-center text-center mt-0">
-        {/* <p className="text-gray-400 text-xs sm:text-sm max-w-lg mx-auto">
-          Transform your space with Decor, where creativity meets functionality.
-          Contact us today to start your journey towards a beautifully designed
-          space that reflects your unique style and enhances your everyday
-          living!
-        </p> */}
         <div
           ref={ref}
           className="relative overflow-hidden mt-0 h-28 sm:h-56 w-full flex justify-center items-center"
@@ -168,7 +141,7 @@ const Footer = () => {
             animate={isInView ? { x: 0 } : {}}
             transition={{ duration: 0.5 }}
           >
-            We’d love to cooperate to build
+            We'd love to cooperate to build
           </motion.h2>
           <motion.h2
             className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.8rem] font-bold absolute z-10 mt-[5rem] sm:mt-[7rem] md:mt-[10rem]"
@@ -222,14 +195,11 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Bottom Flex Container for X Icon and Disclaimer */}
       <div className="w-full flex justify-between items-center mt-8 sm:mt-8 mb-4 sm:mb-4 flex-col sm:flex-row">
-        {/* Footer Bottom Text */}
         <div className="text-base text-gray-400 text-center sm:text-right mb-4 sm:mb-0">
           <p>&copy; Archi-Touch. All Rights Reserved. Licensing</p>
         </div>
 
-        {/* Bottom Left Icon */}
         <div className="flex justify-center items-center">
           <span className="text-white text-xl sm:text-2xl">✖</span>
         </div>

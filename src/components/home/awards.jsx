@@ -61,21 +61,18 @@ const scaleAnimation = {
 const Awards = () => {
   const [modal, setModal] = useState({ active: false, index: 0 });
   const { active, index } = modal;
-  const [hovered, setHovered] = useState(false); 
   const modalContainer = useRef(null);
-
   const cursor = useRef(null);
   const cursorLabel = useRef(null);
 
-
-    let xMoveContainer = useRef(null);
+  let xMoveContainer = useRef(null);
   let yMoveContainer = useRef(null);
   let xMoveCursor = useRef(null);
   let yMoveCursor = useRef(null);
   let xMoveCursorLabel = useRef(null);
   let yMoveCursorLabel = useRef(null);
+
   useEffect(() => {
-    // Move Container
     xMoveContainer.current = gsap.quickTo(modalContainer.current, "left", {
       duration: 0.8,
       ease: "power3",
@@ -84,7 +81,6 @@ const Awards = () => {
       duration: 0.8,
       ease: "power3",
     });
-    // Move cursor
     xMoveCursor.current = gsap.quickTo(cursor.current, "left", {
       duration: 0.5,
       ease: "power3",
@@ -93,7 +89,6 @@ const Awards = () => {
       duration: 0.5,
       ease: "power3",
     });
-    // Move cursor label
     xMoveCursorLabel.current = gsap.quickTo(cursorLabel.current, "left", {
       duration: 0.45,
       ease: "power3",
@@ -107,14 +102,11 @@ const Awards = () => {
   const moveItems = (x, y) => {
     xMoveContainer.current(x);
     yMoveContainer.current(y);
-    if (!hovered) { // Only move the cursor if not hovered
-      xMoveCursor.current(x);
-      yMoveCursor.current(y);
-      xMoveCursorLabel.current(x);
-      yMoveCursorLabel.current(y);
-    }
+    xMoveCursor.current(x);
+    yMoveCursor.current(y);
+    xMoveCursorLabel.current(x);
+    yMoveCursorLabel.current(y);
   };
-
 
   const manageModal = (active, index, x, y) => {
     moveItems(x, y);
@@ -126,7 +118,7 @@ const Awards = () => {
       onMouseMove={(e) => {
         moveItems(e.clientX, e.clientY);
       }}
-      className="py-12 px-6 md:px-16 lg:px-24" // Added cursor-none to hide default cursor
+      className="py-12 px-6 md:px-16 lg:px-24"
     >
       <div className="flex flex-col lg:flex-row justify-between items-start mb-5 md:mb-24">
         <div className="mb-6 lg:mb-0">
@@ -179,59 +171,52 @@ const Awards = () => {
         </table>
       </div>
 
-      <>
-        <motion.div
-          ref={modalContainer}
-          variants={scaleAnimation}
-          initial="initial"
-          animate={active ? "enter" : "closed"}
-          className="h-[250px] w-[300px] fixed top-1/2 left-1/2 bg-white pointer-events-none overflow-hidden z-[3]"
+      <motion.div
+        ref={modalContainer}
+        variants={scaleAnimation}
+        initial="initial"
+        animate={active ? "enter" : "closed"}
+        className="h-[250px] w-[300px] fixed top-1/2 left-1/2 bg-white pointer-events-none overflow-hidden z-[3]"
+      >
+        <div
+          style={{ top: index * -100 + "%" }}
+          className="h-full w-full relative transition-[top] duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
         >
-          <div
-            style={{ top: index * -100 + "%" }}
-            className="h-full w-full relative transition-[top] duration-500 ease-[cubic-bezier(0.76,0,0.24,1)]"
-          >
-            {projects.map((project, index) => {
-              const { src } = project;
-              return (
-                <div
-                  className="h-full w-full flex items-center justify-center"
-                  key={`modal_${index}`}
-                >
-                  <img
-                    src={src}
-                    alt="hover project show"
-                    className="w-full h-full"
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </motion.div>
-         <motion.div
-              ref={cursor}
-              className="w-[80px] h-[80px] rounded-full bg-[#455CE9] text-white fixed z-[3] flex items-center justify-center text-[14px] font-light pointer-events-none"
-              variants={scaleAnimation}
-              initial="initial"
-              animate={active ? "enter" : "closed"}
-            ></motion.div>
+          {projects.map((project, index) => {
+            const { src } = project;
+            return (
+              <div
+                className="h-full w-full flex items-center justify-center"
+                key={`modal_${index}`}
+              >
+                <img
+                  src={src}
+                  alt="hover project show"
+                  className="w-full h-full"
+                />
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
+      
+      <motion.div
+        ref={cursor}
+        className="w-[80px] h-[80px] rounded-full bg-[#455CE9] text-white fixed z-[3] flex items-center justify-center text-[14px] font-light pointer-events-none"
+        variants={scaleAnimation}
+        initial="initial"
+        animate={active ? "enter" : "closed"}
+      ></motion.div>
 
-            <motion.div
-              ref={cursorLabel}
-              className="w-[80px] h-[80px] rounded-full fixed z-[3] flex items-center justify-center text-[14px] font-light pointer-events-none"
-              variants={scaleAnimation}
-              initial="initial"
-              animate={active ? "enter" : "closed"}
-            >
-              View
-            </motion.div>
-
-        {!hovered && ( // Only show cursor when not hovering on a row
-          <>
-           
-          </>
-        )}
-      </>
+      <motion.div
+        ref={cursorLabel}
+        className="w-[80px] h-[80px] rounded-full fixed z-[3] flex items-center justify-center text-[14px] font-light pointer-events-none"
+        variants={scaleAnimation}
+        initial="initial"
+        animate={active ? "enter" : "closed"}
+      >
+        View
+      </motion.div>
     </section>
   );
 };
