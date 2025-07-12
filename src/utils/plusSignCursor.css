@@ -1,0 +1,35 @@
+.cursor {
+  width: 50px; /* Width of the circular cursor */
+  height: 50px; /* Height of the circular cursor */
+  border: 2px solid #fff; /* White border around the circle */
+  border-radius: 50%; /* Make the cursor a perfect circle */
+  position: fixed; /* Fixed position to follow the mouse */
+  display: flex; /* Flexbox for centering contents */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  z-index: 9999; /* Ensure it stays above other elements */
+  pointer-events: none; /* Ignore pointer events */
+  background-color: transparent; /* No background color */
+  transition: transform 0.1s ease, opacity 0.1s ease; /* Smooth movement */
+  transform: translate(-50%, -50%); /* Center cursor */
+}
+
+.plus-sign {
+  font-size: 30px; /* Adjusted font size to fit within the circle */
+  color: #fff; /* White color for the plus sign */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  position: relative; /* Position relative to allow centering */
+  top: -2px; /* Reset top positioning */
+  left: 0; /* Reset left positioning */
+  text-align: center; /* Center the text */
+}
+
+.cursor-hover {
+  scale: 1.5;
+}
+
+button:hover ~ .cursor,
+a:hover ~ .cursor {
+  scale: 1.5;
+}

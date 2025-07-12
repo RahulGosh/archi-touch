@@ -1,0 +1,30 @@
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.sticky {
+  position: sticky;
+  top: 85px; /* Adjust this value to set how far from the top the title should stick */
+  align-self: flex-start;
+}
+
+/* Disable sticky on small screens */
+@media (max-width: 935px) {
+  .sticky {
+      position: static; /* Normal flow on small screens */
+      margin-top: 15px;
+  }
+}
+@media (max-width: 470px) {
+.grid {
+  grid-template-columns: 1fr;
+}
+.stat-left {
+  text-align: left;
+}
+.stat-right {
+  text-align: right;
+}
+}

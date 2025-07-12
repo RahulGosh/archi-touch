@@ -1,0 +1,18 @@
+.textContainer {
+  position: relative;
+  overflow: hidden;
+  height: auto;
+}
+
+.title {
+  position: absolute;
+  width: 100%;
+  transition: transform 0.5s ease;
+}
+
+.hoverText {
+  position: absolute;
+  width: 100%;
+  transform: translateY(100%);
+  transition: transform 0.5s ease;
+}

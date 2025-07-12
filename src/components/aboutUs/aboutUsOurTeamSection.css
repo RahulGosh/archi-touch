@@ -1,0 +1,12 @@
+.heading-line {
+    display: flex;
+    align-items: center;
+  }
+  
+  .heading-line::after {
+    content: "";
+    flex-grow: 1;
+    margin-left: 16px; /* Adjust spacing between text and line */
+    height: 1px;
+    background-color: #ccc; /* Line color */
+  }
